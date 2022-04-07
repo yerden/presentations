@@ -170,15 +170,39 @@ func CreateAwesome() *Awesome {
 	awe := &Awesome{
 		ptr: C.create_awesome(),
 	}
-	
+
 	runtime.SetFinalizer(awe, func(awe *Awesome) {
 		C.free_awesome(awe.ptr)
 	})
-	
+
 	return awe
 }
 ```
 Цена: indirection.
+
+---
+
+Файловый дескриптор:
+```go
+type Awesome struct {
+	f *os.File
+}
+
+func CreateAwesome() *Awesome {
+	f, err := os.OpenFile(...)
+	...
+	awe := &Awesome{f}
+	runtime.SetFinalizer(awe, func(awe *Awesome) { f.Close() })
+	return awe
+}
+
+func () {
+	awe := CreateAwesome()
+	io.Copy(awe.f, ...)
+	...
+	runtime.KeepAlive(awe) // иначе GC может дернуть финализатор до Copy
+}
+```
 
 ---
 
