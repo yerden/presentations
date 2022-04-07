@@ -1,0 +1,3 @@
+[submodule "wunderwaffe220804/themes/reveal-hugo"]
+	path = wunderwaffe220804/themes/reveal-hugo
+	url = git@github.com:dzello/reveal-hugo.git
