@@ -11,18 +11,17 @@ transition = "fade"
 margin = 0
 +++
 
-## Go Dirty Tricks.
+## Go Filthy Tricks.
 
 - Зачем нужны грязные приёмы.
 - Как их применять и чем они "грязны".
 
+![Alt Text](filth.jpg)
+
 ---
 
-Грязные приёмы это:
-
-- Строки.
-- Финализаторы.
-- Двоичные представления.
+Идиоматичность vs Производительность.
+![Alt Text](venice.jpg)
 
 ---
 
@@ -58,7 +57,7 @@ func () {
 
 💡 Не делай аллокаций.
 
-`string(...)`, как правило, делает аллокацию.
+`string(...)`, как правило, делает аллокацию, ибо immutability.
 Исключения:
 
 ```go
@@ -124,6 +123,23 @@ func HashBytes(h hash.Hash64, b []byte) uint64 {
 	runtime.KeepAlive(b)
 
 	return hashValue
+}
+```
+
+---
+
+### Слайсы.
+
+```go
+func C.GoBytes(unsafe.Pointer, C.int) []byte
+
+func MyGoBytes(ptr unsafe.Pointer, n C.int) []byte {
+	var b []byte
+	sh := (*reflect.SliceHeader)(unsafe.Pointer(&b))
+	sh.Data = uintptr(ptr)
+	sh.Len = int(n)
+	sh.Cap = sh.Len
+	return b
 }
 ```
 
